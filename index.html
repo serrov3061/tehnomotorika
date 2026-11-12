@@ -41,7 +41,7 @@
 
 /* ===== Base ===== */
 *,*::before,*::after{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;background:var(--bg);scroll-behavior:smooth;scroll-padding-top:72px}
+html{-webkit-text-size-adjust:100%;background:var(--bg);scroll-behavior:smooth;scroll-padding-top:84px}
 body{margin:0;background:var(--bg);color:var(--text);font:400 var(--fs-body)/1.5 var(--font);-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%}
@@ -52,17 +52,20 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.015em;line-height:1.15}
 .muted{color:var(--muted)}
 
-/* ===== Header ===== */
-.hdr{position:sticky;top:0;z-index:20;background:rgba(11,11,12,.92);-webkit-backdrop-filter:saturate(1.2) blur(10px);backdrop-filter:saturate(1.2) blur(10px);border-bottom:1px solid var(--line)}
-.hdr .wrap{height:56px;display:flex;align-items:center;justify-content:space-between;gap:var(--s4)}
-.logo{display:flex;flex-direction:column;gap:5px}
-.logo b{font-weight:800;font-size:17px;line-height:1;letter-spacing:.005em;font-variation-settings:"slnt" -12,"SHRP" 100}
-.stripe{display:flex;height:3px;width:42px}
-.stripe i{flex:1;transform:skewX(-20deg)}
+/* ===== Header: floating island ===== */
+.hdr{position:sticky;top:0;z-index:20;padding:calc(var(--s3) + env(safe-area-inset-top,0px)) var(--s4) 0;pointer-events:none}
+.island{pointer-events:auto;max-width:560px;margin:0 auto;height:52px;display:flex;align-items:center;justify-content:space-between;gap:var(--s3);padding:0 6px 0 var(--s4);border-radius:999px;background:rgba(24,24,27,.72);-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);border:1px solid rgba(255,255,255,.08);box-shadow:0 8px 24px -12px rgba(0,0,0,.8)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo b{font-weight:800;font-size:15px;line-height:1;letter-spacing:.01em;font-variation-settings:"slnt" -12,"SHRP" 100;white-space:nowrap}
+.stripe{display:flex;gap:2px;height:14px}
+.stripe i{width:4px;transform:skewX(-14deg);border-radius:1px}
 .stripe i:nth-child(1){background:var(--m1)}.stripe i:nth-child(2){background:var(--m2)}.stripe i:nth-child(3){background:var(--m3)}
-.hdr-tel{display:flex;align-items:center;gap:var(--s2);font-weight:600;font-size:15px;padding:var(--s2) 0}
-.hdr-tel svg{width:18px;height:18px}
-@media (max-width:420px){.hdr-tel span{display:none}.hdr-tel{width:40px;height:40px;justify-content:center;border:1px solid var(--line);border-radius:50%}}
+.island nav{display:flex;gap:2px}
+.island nav a{display:flex;align-items:center;height:40px;padding:0 14px;border-radius:999px;font-size:var(--fs-small);font-weight:500;color:var(--muted);transition:color .15s,background-color .15s}
+.island nav a:active{background:rgba(255,255,255,.08);color:var(--text)}
+@media (hover:hover){.island nav a:hover{background:rgba(255,255,255,.06);color:var(--text)}}
+@media (max-width:379px){.island{padding-left:14px;gap:var(--s2)}.stripe{display:none}.logo b{font-size:13px}.island nav a{padding:0 10px;font-size:13px}}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.island{background:#18181b}}
 
 /* ===== Card (first screen) ===== */
 .card{display:grid;gap:var(--s5);padding-top:var(--s4);padding-bottom:var(--s7)}
@@ -87,12 +90,13 @@ h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.015em;line-height:1.15}
 .facts div{display:grid;grid-template-columns:112px 1fr;gap:var(--s4);padding:var(--s4) 0;border-bottom:1px solid var(--line)}
 .facts dt{color:var(--muted);font-size:var(--fs-small);padding-top:1px}
 .facts dd{margin:0}
+@media (max-width:379px){.facts div{grid-template-columns:92px 1fr;gap:var(--s3)}}
 .facts a{text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:4px}
 @media (hover:hover){.facts a:hover{text-decoration-color:var(--text)}}
 
 @media (min-width:900px){
   .card{grid-template-columns:1.1fr 1fr;gap:var(--s7);align-items:start;padding-top:var(--s6);padding-bottom:var(--s8)}
-  .cover{aspect-ratio:4/5;position:sticky;top:80px}
+  .cover{aspect-ratio:4/5;position:sticky;top:88px}
   .side{display:grid;gap:var(--s5);padding-top:var(--s2)}
 }
 @media (max-width:899px){.side{display:grid;gap:var(--s5)}}
@@ -162,12 +166,15 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:var(-
 </svg>
 
 <header class="hdr">
-  <div class="wrap">
-    <a class="logo" href="#" aria-label="ТехноМоторика">
-      <b>TECHNOMOTORICA</b>
+  <div class="island">
+    <a class="logo" href="#" aria-label="ТехноМоторика, наверх">
       <span class="stripe" aria-hidden="true"><i></i><i></i><i></i></span>
+      <b>TECHNOMOTORICA</b>
     </a>
-    <a class="hdr-tel" href="tel:+79854447063" aria-label="Позвонить"><svg><use href="#i-phone"/></svg><span>+7 985 444-70-63</span></a>
+    <nav aria-label="Разделы">
+      <a href="#works">Работы</a>
+      <a href="#prices">Цены</a>
+    </nav>
   </div>
 </header>
 
