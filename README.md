@@ -1,7 +1,10 @@
 # ТехноМоторика
 
-Сайт автосервиса BMW и Mercedes-Benz. Статичный: `index.html` + папка `photos/`.
+Карточка автосервиса BMW и Mercedes-Benz. Статичный сайт без сборки.
 
-- Цены — в разделе «Услуги и цены» в `index.html`.
-- Фото — в `photos/`, подключены в блоке `#gal` и в ленте `.strip`.
-- Деплой: Vercel, Framework Preset — Other, без сборки.
+- `index.html` — вся разметка, стили (токены в `:root`) и скрипт.
+- `fonts/` — Geologica (OFL), подключена локально.
+- `photos/` — фото работ. Чтобы добавить фото, положите файл в `photos/` и добавьте `<button class="shot">` в блок `#rail`.
+- Цены — блок `#prices` в `index.html`.
+
+Деплой: Vercel, каждый пуш в `main`.
