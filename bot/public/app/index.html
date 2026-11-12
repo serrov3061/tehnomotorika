@@ -155,7 +155,7 @@ h1,h2{margin:0;font-weight:700;letter-spacing:-.015em;line-height:1.15}
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var haptic = function (t) { try { if (t === 'select') tg.HapticFeedback.selectionChanged(); else tg.HapticFeedback.notificationOccurred(t); } catch (e) {} };
 
-  var S = { data: null, svc: null, days: [], day: null, slots: [], cell: null, booked: null, confirmCancel: null };
+  var S = { draft: { phone: null, car: null }, data: null, svc: null, days: [], day: null, slots: [], cell: null, booked: null, confirmCancel: null };
 
   function api(path, opts) {
     opts = opts || {};
@@ -284,22 +284,24 @@ h1,h2{margin:0;font-weight:700;letter-spacing:-.015em;line-height:1.15}
     setBack(function () { timeScreen(); });
     var s = S.svc, d = S.days.filter(function (x) { return x.key === S.day; })[0], slot = S.slots.filter(function (x) { return x.cell === S.cell; })[0];
     var p = S.data.profile, canShare = inTg && tg.requestContact;
+    var phoneVal = S.draft.phone != null ? S.draft.phone : p.phone, carVal = S.draft.car != null ? S.draft.car : p.car;
     var h = '<div class="title"><h1>Ваши данные</h1><p>Мастер позвонит, если что-то изменится</p></div>';
     h += '<dl class="facts"><div><dt>Услуга</dt><dd>' + esc(s.name) + '</dd></div><div><dt>Когда</dt><dd>' + esc(cap(d.label)) + '<br>' + esc(slot.range) + '</dd></div>' + (s.price ? '<div><dt>Цена работы</dt><dd>' + esc(s.price) + '</dd></div>' : '') + '</dl>';
-    h += '<label class="field" id="phoneF"><span>Телефон</span><input id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 900 000-00-00" value="' + esc(p.phone) + '"></label>';
-    if (canShare && !p.phone) h += '<button class="link" type="button" id="share">Взять номер из Telegram</button>';
-    h += '<label class="field"><span>Автомобиль</span><input id="car" type="text" autocomplete="off" maxlength="60" placeholder="BMW X5 2019" value="' + esc(p.car) + '"></label>';
+    h += '<label class="field" id="phoneF"><span>Телефон</span><input id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 900 000-00-00" value="' + esc(phoneVal) + '"></label>';
+    if (canShare && !phoneVal) h += '<button class="link" type="button" id="share">Взять номер из Telegram</button>';
+    h += '<label class="field"><span>Автомобиль</span><input id="car" type="text" autocomplete="off" maxlength="60" placeholder="BMW X5 2019" value="' + esc(carVal) + '"></label>';
     view.innerHTML = h;
     window.scrollTo(0, 0);
     var share = $('share');
     if (share) share.addEventListener('click', function () {
       tg.requestContact(function (ok, res) {
         var ph = ok && res && res.responseUnsafe && res.responseUnsafe.contact && res.responseUnsafe.contact.phone_number;
-        if (ph) { $('phone').value = fmtPhone(ph); share.remove(); validate(); }
+        if (ph) { $('phone').value = fmtPhone(ph); S.draft.phone = $('phone').value; share.remove(); validate(); }
       });
     });
-    $('phone').addEventListener('input', validate);
-    $('phone').addEventListener('blur', function () { this.value = fmtPhone(this.value); });
+    $('phone').addEventListener('input', function () { S.draft.phone = this.value; validate(); });
+    $('car').addEventListener('input', function () { S.draft.car = this.value; });
+    $('phone').addEventListener('blur', function () { this.value = fmtPhone(this.value); S.draft.phone = this.value; });
     function validate() { var ok = phoneOk($('phone').value); $('phoneF').classList.remove('err'); setCta('Записаться', true, submit); return ok; }
     validate();
   }
@@ -320,7 +322,7 @@ h1,h2{margin:0;font-weight:700;letter-spacing:-.015em;line-height:1.15}
     sending = true; setCta('Записываем…', false);
     api('/book', { method: 'POST', body: { svc: S.svc.id, day: S.day, cell: S.cell, phone: phone, car: car } }).then(function (r) {
       sending = false;
-      if (r.booking) { haptic('success'); S.data.profile.phone = phone; S.data.profile.car = car; S.booked = r.booking; return doneScreen(); }
+      if (r.booking) { haptic('success'); S.data.profile.phone = phone; S.data.profile.car = car; S.draft = { phone: null, car: null }; S.booked = r.booking; return doneScreen(); }
       haptic('error');
       if (r.error === 'taken') { toast('Это время только что заняли. Выберите другое.'); S.cell = null; return loadSlots(); }
       if (r.error === 'past') { toast('Это время уже прошло.'); S.cell = null; return loadSlots(); }
