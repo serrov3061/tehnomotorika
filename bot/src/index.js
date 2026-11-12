@@ -5,7 +5,8 @@ import {
   firstOpenCell, freeStarts, bookableDays, isUpcoming, cellTime,
 } from './time.js';
 
-const SVC = Object.fromEntries(SERVICES.map((s) => [s.id, s]));
+export const SVC = Object.fromEntries(SERVICES.map((s) => [s.id, s]));
+let ORIGIN = ''; // адрес воркера, берётся из входящего запроса
 
 /* ---------------- Telegram ---------------- */
 
@@ -59,7 +60,7 @@ function setSession(env, uid, data) {
 function clearSession(env, uid) {
   return env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(uid).run();
 }
-function getClient(env, uid) {
+export function getClient(env, uid) {
   return env.DB.prepare('SELECT * FROM clients WHERE user_id = ?').bind(uid).first();
 }
 function saveClient(env, uid, fields) {
@@ -118,7 +119,7 @@ function svcLine(s) {
   return `${s.name}${s.price ? ` · ${s.price}` : ''}`;
 }
 
-function bookingText(bk) {
+export function bookingText(bk) {
   const s = SVC[bk.service];
   return `${dayLong(bk.day)}, ${rangeText(bk.start, bk.len)}\n${esc(s ? svcLine(s) : bk.service)}`;
 }
@@ -135,7 +136,8 @@ const contactsKb = [u('Маршрут', CONTACTS.map), u('Сайт', CONTACTS.si
 async function homeScreen(env, ctx) {
   await clearSession(env, ctx.uid);
   const text = `<b>ТехноМоторика</b>\nСервис BMW и Mercedes-Benz\n${CONTACTS.hours} · ${CONTACTS.phone}\n\nВыберите услугу и время — оно сразу закрепится за вами.`;
-  return show(env, ctx, text, ik([[b('Записаться', 'book')], [b('Мои записи', 'my')], contactsKb]));
+  const first = ORIGIN ? [{ text: 'Открыть запись', web_app: { url: `${ORIGIN}/app` } }] : [b('Записаться', 'book')];
+  return show(env, ctx, text, ik([first, [b('Записаться в чате', 'book'), b('Мои записи', 'my')], contactsKb]));
 }
 
 async function servicesScreen(env, ctx) {
@@ -215,34 +217,50 @@ async function confirmScreen(env, ctx, sess) {
   return show(env, ctx, text, ik([[b('Записаться', 'ok')], [b('Другое время', `d:${s.id}:${sess.day}`), b('Отмена', 'home')]]));
 }
 
+/**
+ * Общая запись клиента — для бота и мини-аппа.
+ * Возвращает { booking } или { error: 'bad' | 'phone' | 'past' | 'limit' | 'taken' }.
+ */
+export async function createBooking(env, { uid, name, phone, car, svc, day, cell }) {
+  const s = SVC[svc];
+  cell = Number(cell);
+  if (!s || !isValidDay(day) || isClosed(day) || !Number.isInteger(cell) || cell < 0 || cell + s.len > CELLS) return { error: 'bad' };
+  if (!phone) return { error: 'phone' };
+  const now = Date.now();
+  if (!bookableDays(now).includes(day) || cell < firstOpenCell(day, now)) return { error: 'past' };
+  const active = await env.DB.prepare("SELECT COUNT(*) AS n FROM bookings WHERE user_id = ? AND kind = 'client' AND status = 'active' AND day >= ?").bind(uid, todayKey(now)).first();
+  if (active.n >= MAX_ACTIVE_PER_CLIENT) return { error: 'limit', count: active.n };
+  const id = await reserve(env, { kind: 'client', user_id: uid, name, phone, car: car || null, service: s.id, day, start: cell, len: s.len });
+  if (!id) return { error: 'taken' };
+  const booking = await getBooking(env, id);
+  for (const a of await adminIds(env)) {
+    await send(env, a, `<b>Новая запись</b>\n${bookingText(booking)}\n${clientCard(booking)}`, ik([[b('Отменить запись', `ac:${id}`)]]));
+  }
+  return { booking };
+}
+
 async function commit(env, ctx) {
   const sess = await getSession(env, ctx.uid);
   const s = SVC[sess.svc];
   if (sess.step !== 'confirm' || !s) return homeScreen(env, ctx);
   const client = await getClient(env, ctx.uid);
-
-  const today = todayKey(Date.now());
-  const active = await env.DB.prepare("SELECT COUNT(*) AS n FROM bookings WHERE user_id = ? AND kind = 'client' AND status = 'active' AND day >= ?").bind(ctx.uid, today).first();
-  if (active.n >= MAX_ACTIVE_PER_CLIENT) {
-    return show(env, ctx, `У вас уже ${active.n} активные записи. Чтобы записаться ещё, отмените одну из них или позвоните: ${CONTACTS.phone}`, ik([[b('Мои записи', 'my')]]));
-  }
-  if (sess.cell < firstOpenCell(sess.day, Date.now())) {
-    return timesScreen(env, ctx, s.id, sess.day, 'Это время уже прошло.\n\n');
-  }
-
-  const id = await reserve(env, {
-    kind: 'client', user_id: ctx.uid, name: client?.name || ctx.name, phone: client?.phone, car: sess.car || null,
-    service: s.id, day: sess.day, start: sess.cell, len: s.len,
-  });
-  if (!id) return timesScreen(env, ctx, s.id, sess.day, 'Это время только что заняли. Выберите другое.\n\n');
-
+  const r = await createBooking(env, { uid: ctx.uid, name: client?.name || ctx.name, phone: client?.phone, car: sess.car, svc: s.id, day: sess.day, cell: sess.cell });
+  if (r.error === 'limit') return show(env, ctx, `У вас уже ${r.count} активные записи. Чтобы записаться ещё, отмените одну из них или позвоните: ${CONTACTS.phone}`, ik([[b('Мои записи', 'my')]]));
+  if (r.error === 'past') return timesScreen(env, ctx, s.id, sess.day, 'Это время уже прошло.\n\n');
+  if (r.error === 'taken') return timesScreen(env, ctx, s.id, sess.day, 'Это время только что заняли. Выберите другое.\n\n');
+  if (r.error) return homeScreen(env, ctx);
   await clearSession(env, ctx.uid);
-  const bk = await getBooking(env, id);
-  await show(env, ctx, `<b>Вы записаны</b>\n\n${bookingText(bk)}\n\nЖдём вас. Если планы изменятся — отмените запись, чтобы время освободилось.\n${CONTACTS.phone}`,
+  return show(env, ctx, `<b>Вы записаны</b>\n\n${bookingText(r.booking)}\n\nЖдём вас. Если планы изменятся — отмените запись, чтобы время освободилось.\n${CONTACTS.phone}`,
     ik([[b('Мои записи', 'my')], contactsKb]));
-  for (const a of await adminIds(env)) {
-    await send(env, a, `<b>Новая запись</b>\n${bookingText(bk)}\n${clientCard(bk)}`, ik([[b('Отменить запись', `ac:${id}`)]]));
-  }
+}
+
+/** Отмена клиентом — общая для бота и мини-аппа. */
+export async function cancelByClient(env, uid, id) {
+  const bk = await getBooking(env, id);
+  if (!bk || bk.user_id !== uid || bk.kind !== 'client') return false;
+  if (!(await release(env, id))) return false;
+  for (const a of await adminIds(env)) await send(env, a, `<b>Клиент отменил запись</b>\n${bookingText(bk)}\n${clientCard(bk)}`);
+  return true;
 }
 
 async function myScreen(env, ctx) {
@@ -266,9 +284,7 @@ async function clientCancelAsk(env, ctx, id) {
 async function clientCancel(env, ctx, id) {
   const bk = await getBooking(env, id);
   if (!bk || bk.user_id !== ctx.uid) return myScreen(env, ctx);
-  if (await release(env, id)) {
-    for (const a of await adminIds(env)) await send(env, a, `<b>Клиент отменил запись</b>\n${bookingText(bk)}\n${clientCard(bk)}`);
-  }
+  await cancelByClient(env, ctx.uid, id);
   return show(env, ctx, 'Запись отменена, время освободилось.', ik([[b('Записаться снова', 'book')], [b('Мои записи', 'my')]]));
 }
 
@@ -366,6 +382,11 @@ async function onMessage(env, msg) {
   if (text === '/my') return myScreen(env, ctx);
 
   const sess = await getSession(env, ctx.uid);
+  if (msg.contact && sess.step !== 'phone') {
+    const phone = normPhone(msg.contact.phone_number);
+    if (phone && (!msg.contact.user_id || msg.contact.user_id === ctx.uid)) await saveClient(env, ctx.uid, { name: ctx.name, phone });
+    return;
+  }
   if (sess.step === 'phone') {
     const raw = msg.contact?.phone_number || text;
     const phone = normPhone(raw);
@@ -442,11 +463,115 @@ async function morningDigest(env) {
   for (const a of await adminIds(env)) await dayScreen(env, { uid: a, chat: a }, day);
 }
 
+/* ---------------- API мини-аппа ---------------- */
+
+const enc = new TextEncoder();
+async function hmac(key, data) {
+  const k = await crypto.subtle.importKey('raw', typeof key === 'string' ? enc.encode(key) : key, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  return new Uint8Array(await crypto.subtle.sign('HMAC', k, enc.encode(data)));
+}
+
+/** Проверка подписи Telegram WebApp initData. Возвращает пользователя или null. */
+export async function verifyInitData(initData, botToken, maxAgeSec = 86400) {
+  if (!initData || !botToken) return null;
+  const p = new URLSearchParams(initData);
+  const hash = p.get('hash');
+  if (!hash) return null;
+  p.delete('hash');
+  const dcs = [...p.entries()].sort(([a], [b2]) => (a < b2 ? -1 : a > b2 ? 1 : 0)).map(([k, v]) => `${k}=${v}`).join('\n');
+  const secret = await hmac('WebAppData', botToken);
+  const sig = [...(await hmac(secret, dcs))].map((x) => x.toString(16).padStart(2, '0')).join('');
+  if (sig !== hash) return null;
+  if (Date.now() / 1000 - Number(p.get('auth_date') || 0) > maxAgeSec) return null;
+  try { return JSON.parse(p.get('user')); } catch { return null; }
+}
+
+async function apiUser(req, env) {
+  const u2 = await verifyInitData(req.headers.get('x-init-data'), env.BOT_TOKEN);
+  if (u2?.id) return u2;
+  if (env.DEV_AUTH === '1' && req.headers.get('x-dev-user')) return { id: Number(req.headers.get('x-dev-user')), first_name: 'Dev' };
+  return null;
+}
+
+const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
+
+function svcOut(s) {
+  return { id: s.id, name: s.name, price: s.price, len: s.len, duration: durationText(s.len), hint: s.hint || '' };
+}
+function bookingOut(bk) {
+  const s = SVC[bk.service];
+  return { id: bk.id, day: bk.day, date: dayLong(bk.day), range: rangeText(bk.start, bk.len), service: s ? s.name : bk.service, price: s?.price || '', car: bk.car || '' };
+}
+const WD = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+
+async function handleApi(req, env, url) {
+  const user = await apiUser(req, env);
+  if (!user) return json({ error: 'auth' }, 401);
+  const uid = user.id;
+  const name = [user.first_name, user.last_name].filter(Boolean).join(' ');
+  const path = url.pathname.slice(4);
+  const now = Date.now();
+
+  if (path === '/init' && req.method === 'GET') {
+    await saveClient(env, uid, { name });
+    const client = await getClient(env, uid);
+    const { results } = await env.DB.prepare("SELECT * FROM bookings WHERE user_id = ? AND kind = 'client' AND status = 'active' AND day >= ? ORDER BY day, start").bind(uid, todayKey(now)).all();
+    return json({
+      services: SERVICES.map(svcOut),
+      contacts: CONTACTS,
+      profile: { name: client?.name || name, phone: client?.phone || '', car: client?.car || '' },
+      bookings: results.filter((bk) => isUpcoming(bk.day, bk.start, now)).map(bookingOut),
+    });
+  }
+
+  if (path === '/days' && req.method === 'GET') {
+    const s = SVC[url.searchParams.get('svc')];
+    if (!s) return json({ error: 'bad' }, 400);
+    const days = bookableDays(now);
+    const busy = await allBusy(env, days[0], days[days.length - 1]);
+    return json({ days: days.map((d) => {
+      const dt = new Date(Date.UTC(+d.slice(0, 4), +d.slice(4, 6) - 1, +d.slice(6, 8)));
+      return { key: d, wd: WD[dt.getUTCDay()], d: String(dt.getUTCDate()), label: dayLong(d), free: freeStarts(busy.get(d) || new Set(), s.len, firstOpenCell(d, now)).length };
+    }) });
+  }
+
+  if (path === '/slots' && req.method === 'GET') {
+    const s = SVC[url.searchParams.get('svc')], day = url.searchParams.get('day') || '';
+    if (!s || !isValidDay(day)) return json({ error: 'bad' }, 400);
+    const starts = isClosed(day) ? [] : freeStarts(await busyCells(env, day), s.len, firstOpenCell(day, now));
+    return json({ slots: starts.map((c) => ({ cell: c, time: cellTime(c), range: rangeText(c, s.len) })) });
+  }
+
+  if (path === '/book' && req.method === 'POST') {
+    const body = await req.json().catch(() => ({}));
+    const phone = normPhone(body.phone);
+    if (!phone) return json({ error: 'phone' }, 400);
+    const car = String(body.car || '').trim().slice(0, 60);
+    await saveClient(env, uid, { name, phone, car: car || null });
+    const r = await createBooking(env, { uid, name, phone, car, svc: body.svc, day: String(body.day || ''), cell: body.cell });
+    if (r.error) return json({ error: r.error, count: r.count }, r.error === 'taken' ? 409 : 400);
+    await send(env, uid, `<b>Вы записаны</b>\n\n${bookingText(r.booking)}\n\nНапоминание придёт накануне. Отменить можно в мини-приложении или в «Мои записи».`, ik([[b('Мои записи', 'my')], contactsKb]));
+    return json({ booking: bookingOut(r.booking) });
+  }
+
+  if (path === '/cancel' && req.method === 'POST') {
+    const body = await req.json().catch(() => ({}));
+    const done = await cancelByClient(env, uid, Number(body.id));
+    return done ? json({ ok: true }) : json({ error: 'bad' }, 400);
+  }
+
+  return json({ error: 'not_found' }, 404);
+}
+
 /* ---------------- Worker ---------------- */
 
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
+    ORIGIN = url.origin;
+    if (url.pathname.startsWith('/api/')) {
+      try { return await handleApi(req, env, url); } catch (e) { console.log('api error', e?.stack || String(e)); return json({ error: 'server' }, 500); }
+    }
     if (url.pathname === '/tg' && req.method === 'POST') {
       if (req.headers.get('x-telegram-bot-api-secret-token') !== env.WEBHOOK_SECRET) return new Response('forbidden', { status: 403 });
       const upd = await req.json().catch(() => ({}));
@@ -462,8 +587,9 @@ export default {
       if (!env.WEBHOOK_SECRET || url.searchParams.get('key') !== env.WEBHOOK_SECRET) return new Response('forbidden', { status: 403 });
       const hook = await tg(env, 'setWebhook', { url: `${url.origin}/tg`, secret_token: env.WEBHOOK_SECRET, allowed_updates: ['message', 'callback_query'], drop_pending_updates: true });
       const cmds = await tg(env, 'setMyCommands', { commands: [{ command: 'book', description: 'Записаться' }, { command: 'my', description: 'Мои записи' }, { command: 'start', description: 'Главное меню' }] });
+      const menu = await tg(env, 'setChatMenuButton', { menu_button: { type: 'web_app', text: 'Запись', web_app: { url: `${url.origin}/app` } } });
       const me = await tg(env, 'getMe', {});
-      return Response.json({ webhook: hook.ok, commands: cmds.ok, bot: me.result?.username, link: me.result ? `https://t.me/${me.result.username}?start=book` : null });
+      return Response.json({ webhook: hook.ok, commands: cmds.ok, menu: menu.ok, app: `${url.origin}/app`, bot: me.result?.username, link: me.result ? `https://t.me/${me.result.username}?start=book` : null });
     }
     if (url.pathname === '/book') {
       const me = await tg(env, 'getMe', {});

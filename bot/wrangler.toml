@@ -13,3 +13,7 @@ crons = ["0 6 * * *", "0 9 * * *"]
 
 [observability]
 enabled = true
+
+# Мини-приложение (public/app) отдаётся как статика
+[assets]
+directory = "./public"

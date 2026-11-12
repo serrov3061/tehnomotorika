@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Запись — ТехноМоторика</title>
+<meta name="theme-color" content="#0b0b0c">
+<link rel="preload" href="/fonts/geologica-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+/* Шрифт и токены — те же, что на сайте */
+@font-face{font-family:"Geologica";src:url(/fonts/geologica-cyrillic.woff2) format("woff2");font-weight:100 900;font-display:swap;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:"Geologica";src:url(/fonts/geologica-latin.woff2) format("woff2");font-weight:100 900;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+20BD,U+2122,U+2191,U+2193,U+2212,U+2215}
+:root{
+  --bg:#0b0b0c; --surface:#151517; --line:#26262a; --text:#f3f2ef; --muted:#9b9ba1;
+  --red:#e1252b; --red-press:#c41e24; --m1:#4fa3e0; --m2:#1c3f94; --m3:#e1252b;
+  --fs-h1:24px; --fs-body:16px; --fs-small:14px;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
+  --r:12px;
+  --font:"Geologica",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font:400 var(--fs-body)/1.5 var(--font);-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+body{min-height:100vh;min-height:100dvh}
+button,input{font:inherit;color:inherit}
+button{background:none;border:0;padding:0;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--text);outline-offset:2px;border-radius:6px}
+h1,h2{margin:0;font-weight:700;letter-spacing:-.015em;line-height:1.15}
+.muted{color:var(--muted)}
+
+.app{max-width:480px;margin:0 auto;padding:var(--s4) var(--s4) calc(96px + var(--safe-b))}
+.app.no-cta{padding-bottom:calc(var(--s6) + var(--safe-b))}
+
+/* Верх */
+.top{display:flex;align-items:center;justify-content:space-between;height:40px;margin-bottom:var(--s5)}
+.logo{display:flex;align-items:center;gap:10px}
+.stripe{display:flex;gap:2px;height:14px}
+.stripe i{width:4px;transform:skewX(-14deg);border-radius:1px}
+.stripe i:nth-child(1){background:var(--m1)}.stripe i:nth-child(2){background:var(--m2)}.stripe i:nth-child(3){background:var(--m3)}
+.logo b{font-weight:800;font-size:14px;letter-spacing:.01em;font-variation-settings:"slnt" -12,"SHRP" 100}
+.back{display:none;align-items:center;gap:6px;height:40px;padding:0 var(--s3) 0 var(--s2);margin-left:calc(var(--s2) * -1);border-radius:999px;color:var(--muted);font-size:var(--fs-small)}
+.back svg{width:18px;height:18px}
+.no-tg .back.on{display:flex}
+
+.title{margin-bottom:var(--s5)}
+.title h1{font-size:var(--fs-h1)}
+.title p{margin:var(--s1) 0 0;color:var(--muted);font-size:var(--fs-small)}
+
+/* Списки (как прайс на сайте) */
+.list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:var(--s4);width:100%;padding:var(--s4) 0;border-bottom:1px solid var(--line);text-align:left;transition:opacity .15s}
+.row:active{opacity:.6}
+.row .name{display:block}
+.row .sub{display:block;margin-top:2px;font-size:var(--fs-small);color:var(--muted)}
+.row .chev{width:16px;height:16px;flex:none;color:var(--muted)}
+.label{margin:var(--s6) 0 var(--s3);font-size:var(--fs-small);font-weight:600;color:var(--muted)}
+.label:first-child{margin-top:0}
+
+/* Мои записи */
+.card{border:1px solid var(--line);border-radius:var(--r);padding:var(--s4);background:var(--surface)}
+.card + .card{margin-top:var(--s2)}
+.card .when{font-weight:600}
+.card .what{margin-top:2px;font-size:var(--fs-small);color:var(--muted)}
+.card .act{margin-top:var(--s3);font-size:var(--fs-small);color:var(--muted);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:4px}
+.card .act.confirm{color:var(--red);text-decoration-color:currentColor}
+
+/* Дни */
+.days{display:flex;gap:var(--s2);overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;margin:0 calc(var(--s4) * -1);padding:0 var(--s4) 2px;scroll-padding:0 var(--s4)}
+.days::-webkit-scrollbar{display:none}
+.day{flex:0 0 56px;height:68px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1px solid var(--line);border-radius:var(--r);scroll-snap-align:start;transition:background-color .15s,border-color .15s,color .15s}
+.day .wd{font-size:12px;color:var(--muted)}
+.day .d{font-size:20px;font-weight:600;line-height:1}
+.day[disabled]{opacity:.35;cursor:default}
+.day[aria-pressed="true"]{background:var(--text);border-color:var(--text);color:var(--bg)}
+.day[aria-pressed="true"] .wd{color:#55555a}
+
+/* Время */
+.times{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s2)}
+.slot{height:44px;border:1px solid var(--line);border-radius:10px;font-variant-numeric:tabular-nums;font-weight:500;transition:background-color .15s,border-color .15s,color .15s}
+.slot[aria-pressed="true"]{background:var(--text);border-color:var(--text);color:var(--bg)}
+.empty{padding:var(--s4) 0;color:var(--muted);font-size:var(--fs-small)}
+@media (max-width:340px){.times{grid-template-columns:repeat(3,1fr)}}
+
+/* Сводка */
+.facts{margin:0;border-top:1px solid var(--line)}
+.facts div{display:grid;grid-template-columns:104px 1fr;gap:var(--s3);padding:var(--s3) 0;border-bottom:1px solid var(--line)}
+.facts dt{color:var(--muted);font-size:var(--fs-small);padding-top:1px}
+.facts dd{margin:0}
+
+/* Поля */
+.field{display:block;margin-top:var(--s5)}
+.field span{display:block;margin-bottom:var(--s2);font-size:var(--fs-small);color:var(--muted)}
+.field input{width:100%;height:52px;padding:0 var(--s4);background:var(--surface);border:1px solid var(--line);border-radius:var(--r);outline:none;font-size:16px;transition:border-color .15s}
+.field input:focus{border-color:var(--muted)}
+.field input::placeholder{color:#5b5b61}
+.field.err input{border-color:var(--red)}
+.link{margin-top:var(--s2);font-size:var(--fs-small);color:var(--muted);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:4px}
+
+/* Готово */
+.done h1{font-size:28px}
+.done .facts{margin-top:var(--s5)}
+.done p{margin:var(--s5) 0 0;color:var(--muted);font-size:var(--fs-small)}
+
+/* Низ */
+.foot{margin-top:var(--s6);font-size:var(--fs-small);color:var(--muted)}
+.foot a{text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:4px}
+.cta{position:fixed;left:0;right:0;bottom:0;padding:var(--s3) var(--s4) calc(var(--s3) + var(--safe-b));background:linear-gradient(to top,var(--bg) 70%,rgba(11,11,12,0))}
+.cta[hidden]{display:none}
+.cta button{display:block;width:100%;max-width:448px;margin:0 auto;height:56px;border-radius:var(--r);background:var(--red);color:#fff;font-weight:600;font-size:17px;transition:background-color .15s,opacity .15s}
+.cta button:active{background:var(--red-press)}
+.cta button:disabled{background:var(--surface);color:var(--muted);cursor:default}
+.toast{position:fixed;left:var(--s4);right:var(--s4);bottom:calc(84px + var(--safe-b));max-width:448px;margin:0 auto;padding:var(--s3) var(--s4);border-radius:var(--r);background:#2a1213;border:1px solid #5c1c1f;font-size:var(--fs-small);opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none}
+.toast.on{opacity:1;transform:none}
+
+.skel{height:56px;border-bottom:1px solid var(--line);position:relative;overflow:hidden}
+.skel::after{content:"";position:absolute;left:0;top:18px;height:14px;width:55%;border-radius:4px;background:var(--surface)}
+
+.gate{padding-top:20vh;text-align:center}
+.gate p{color:var(--muted);margin:var(--s2) 0 var(--s5)}
+.gate a{display:inline-flex;align-items:center;height:52px;padding:0 var(--s5);border-radius:var(--r);background:var(--red);color:#fff;font-weight:600;text-decoration:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></symbol>
+  <symbol id="left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></symbol>
+</svg>
+
+<div class="app" id="app">
+  <div class="top">
+    <div class="logo"><span class="stripe" aria-hidden="true"><i></i><i></i><i></i></span><b>TECHNOMOTORICA</b></div>
+    <button class="back" id="back" type="button"><svg><use href="#left"/></svg>Назад</button>
+  </div>
+  <main id="view"></main>
+</div>
+<div class="cta" id="cta" hidden><button type="button" id="ctaBtn"></button></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  var tg = window.Telegram && window.Telegram.WebApp;
+  var inTg = !!(tg && tg.initData);
+  var devUser = new URLSearchParams(location.search).get('dev');
+  if (!inTg) document.body.classList.add('no-tg');
+
+  if (tg) {
+    try { tg.ready(); tg.expand(); tg.setHeaderColor('#0b0b0c'); tg.setBackgroundColor('#0b0b0c'); if (tg.setBottomBarColor) tg.setBottomBarColor('#0b0b0c'); if (tg.disableVerticalSwipes) tg.disableVerticalSwipes(); } catch (e) {}
+  }
+
+  var $ = function (id) { return document.getElementById(id); };
+  var view = $('view'), cta = $('cta'), ctaBtn = $('ctaBtn'), backEl = $('back'), toastEl = $('toast');
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var haptic = function (t) { try { if (t === 'select') tg.HapticFeedback.selectionChanged(); else tg.HapticFeedback.notificationOccurred(t); } catch (e) {} };
+
+  var S = { data: null, svc: null, days: [], day: null, slots: [], cell: null, booked: null, confirmCancel: null };
+
+  function api(path, opts) {
+    opts = opts || {};
+    var headers = { 'content-type': 'application/json' };
+    if (inTg) headers['x-init-data'] = tg.initData;
+    else if (devUser) headers['x-dev-user'] = devUser;
+    return fetch('/api' + path, { method: opts.method || 'GET', headers: headers, body: opts.body ? JSON.stringify(opts.body) : undefined })
+      .then(function (r) { return r.json().then(function (j) { j.status = r.status; return j; }); });
+  }
+
+  var tTimer;
+  function toast(msg) { toastEl.textContent = msg; toastEl.classList.add('on'); clearTimeout(tTimer); tTimer = setTimeout(function () { toastEl.classList.remove('on'); }, 3200); }
+
+  var ctaAction = null;
+  function setCta(text, enabled, action) {
+    if (!text) { cta.hidden = true; $('app').classList.add('no-cta'); ctaAction = null; return; }
+    cta.hidden = false; $('app').classList.remove('no-cta');
+    ctaBtn.textContent = text; ctaBtn.disabled = !enabled; ctaAction = action;
+  }
+  ctaBtn.addEventListener('click', function () { if (ctaAction && !ctaBtn.disabled) ctaAction(); });
+
+  var backAction = null;
+  function setBack(action) {
+    backAction = action;
+    backEl.classList.toggle('on', !!action);
+    if (tg && tg.BackButton) { try { action ? tg.BackButton.show() : tg.BackButton.hide(); } catch (e) {} }
+  }
+  backEl.addEventListener('click', function () { if (backAction) backAction(); });
+  if (tg && tg.BackButton) tg.BackButton.onClick(function () { if (backAction) backAction(); });
+
+  function skeleton(n) { var h = '<div class="list">'; for (var i = 0; i < n; i++) h += '<div class="skel"></div>'; return h + '</div>'; }
+
+  /* ---------- Экраны ---------- */
+
+  function home() {
+    S.svc = null; S.day = null; S.cell = null;
+    setBack(null);
+    var d = S.data, h = '';
+    h += '<div class="title"><h1>Запись на сервис</h1><p>' + esc(d.contacts.hours) + '</p></div>';
+    if (d.bookings.length) {
+      h += '<h2 class="label">Ваши записи</h2>';
+      d.bookings.forEach(function (b) {
+        var confirm = S.confirmCancel === b.id;
+        h += '<div class="card"><div class="when">' + esc(cap(b.date)) + ', ' + esc(b.range) + '</div><div class="what">' + esc(b.service) + (b.car ? ' · ' + esc(b.car) : '') + '</div>'
+          + '<button class="act' + (confirm ? ' confirm' : '') + '" type="button" data-cancel="' + b.id + '">' + (confirm ? 'Точно отменить?' : 'Отменить запись') + '</button></div>';
+      });
+    }
+    h += '<h2 class="label">Услуга</h2><ul class="list">';
+    d.services.forEach(function (s) {
+      h += '<li><button class="row" type="button" data-svc="' + s.id + '"><span><span class="name">' + esc(s.name) + '</span><span class="sub">' + esc(s.hint ? s.hint : [s.duration, s.price].filter(Boolean).join(' · ')) + '</span></span><svg class="chev"><use href="#chev"/></svg></button></li>';
+    });
+    h += '</ul><p class="foot">Вопросы — <a href="tel:' + d.contacts.phone.replace(/[^\d+]/g, '') + '">' + esc(d.contacts.phone) + '</a></p>';
+    view.innerHTML = h;
+    setCta(null);
+    view.querySelectorAll('[data-svc]').forEach(function (el) { el.addEventListener('click', function () { haptic('select'); pickService(el.getAttribute('data-svc')); }); });
+    view.querySelectorAll('[data-cancel]').forEach(function (el) { el.addEventListener('click', function () { cancel(Number(el.getAttribute('data-cancel'))); }); });
+    window.scrollTo(0, 0);
+  }
+
+  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+  function svcById(id) { return S.data.services.filter(function (s) { return s.id === id; })[0]; }
+
+  function cancel(id) {
+    if (S.confirmCancel !== id) { S.confirmCancel = id; haptic('warning'); return home(); }
+    S.confirmCancel = null;
+    api('/cancel', { method: 'POST', body: { id: id } }).then(function (r) {
+      if (r.ok) { haptic('success'); toast('Запись отменена'); return load(); }
+      toast('Не получилось отменить. Попробуйте ещё раз.'); home();
+    });
+  }
+
+  function pickService(id) {
+    S.svc = svcById(id); S.day = null; S.cell = null; S.slots = [];
+    timeScreen(true);
+    api('/days?svc=' + id).then(function (r) {
+      S.days = r.days || [];
+      var first = S.days.filter(function (d) { return d.free > 0; })[0];
+      S.day = first ? first.key : null;
+      return S.day ? loadSlots() : timeScreen();
+    });
+  }
+
+  function loadSlots() {
+    S.slots = null; timeScreen();
+    return api('/slots?svc=' + S.svc.id + '&day=' + S.day).then(function (r) {
+      S.slots = r.slots || [];
+      if (S.cell != null && !S.slots.some(function (x) { return x.cell === S.cell; })) S.cell = null;
+      timeScreen();
+    });
+  }
+
+  function timeScreen(loading) {
+    setBack(home);
+    var s = S.svc, h = '';
+    h += '<div class="title"><h1>' + esc(s.name) + '</h1><p>' + esc([s.duration, s.price].filter(Boolean).join(' · ')) + '</p></div>';
+    if (loading) { view.innerHTML = h + skeleton(3); setCta('Выберите время', false); return; }
+    if (!S.days.some(function (d) { return d.free > 0; })) {
+      view.innerHTML = h + '<p class="empty">На ближайшие две недели свободного времени нет. Позвоните: ' + esc(S.data.contacts.phone) + '</p>';
+      return setCta(null);
+    }
+    h += '<h2 class="label">День</h2><div class="days" id="days">';
+    S.days.forEach(function (d) {
+      h += '<button class="day" type="button" data-day="' + d.key + '" aria-pressed="' + (d.key === S.day) + '" aria-label="' + esc(d.label) + '"' + (d.free ? '' : ' disabled') + '><span class="wd">' + d.wd + '</span><span class="d">' + d.d + '</span></button>';
+    });
+    h += '</div><h2 class="label">Время начала</h2>';
+    if (S.slots === null) h += '<div class="times">' + Array(8).join('<div class="slot" style="opacity:.25"></div>') + '</div>';
+    else if (!S.slots.length) h += '<p class="empty">На этот день времени нет.</p>';
+    else {
+      h += '<div class="times">';
+      S.slots.forEach(function (x) { h += '<button class="slot" type="button" data-cell="' + x.cell + '" aria-pressed="' + (x.cell === S.cell) + '">' + x.time + '</button>'; });
+      h += '</div>';
+    }
+    var keepScroll = $('days') ? $('days').scrollLeft : 0;
+    view.innerHTML = h;
+    var daysEl = $('days');
+    if (daysEl) {
+      daysEl.scrollLeft = keepScroll;
+      daysEl.querySelectorAll('[data-day]').forEach(function (el) { el.addEventListener('click', function () { if (el.disabled || el.getAttribute('data-day') === S.day) return; haptic('select'); S.day = el.getAttribute('data-day'); S.cell = null; loadSlots(); }); });
+    }
+    view.querySelectorAll('[data-cell]').forEach(function (el) { el.addEventListener('click', function () { haptic('select'); S.cell = Number(el.getAttribute('data-cell')); timeScreen(); }); });
+    var slot = S.slots && S.slots.filter(function (x) { return x.cell === S.cell; })[0];
+    setCta(slot ? 'Далее · ' + slot.range : 'Выберите время', !!slot, detailsScreen);
+  }
+
+  function detailsScreen() {
+    setBack(function () { timeScreen(); });
+    var s = S.svc, d = S.days.filter(function (x) { return x.key === S.day; })[0], slot = S.slots.filter(function (x) { return x.cell === S.cell; })[0];
+    var p = S.data.profile, canShare = inTg && tg.requestContact;
+    var h = '<div class="title"><h1>Ваши данные</h1><p>Мастер позвонит, если что-то изменится</p></div>';
+    h += '<dl class="facts"><div><dt>Услуга</dt><dd>' + esc(s.name) + '</dd></div><div><dt>Когда</dt><dd>' + esc(cap(d.label)) + '<br>' + esc(slot.range) + '</dd></div>' + (s.price ? '<div><dt>Цена работы</dt><dd>' + esc(s.price) + '</dd></div>' : '') + '</dl>';
+    h += '<label class="field" id="phoneF"><span>Телефон</span><input id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 900 000-00-00" value="' + esc(p.phone) + '"></label>';
+    if (canShare && !p.phone) h += '<button class="link" type="button" id="share">Взять номер из Telegram</button>';
+    h += '<label class="field"><span>Автомобиль</span><input id="car" type="text" autocomplete="off" maxlength="60" placeholder="BMW X5 2019" value="' + esc(p.car) + '"></label>';
+    view.innerHTML = h;
+    window.scrollTo(0, 0);
+    var share = $('share');
+    if (share) share.addEventListener('click', function () {
+      tg.requestContact(function (ok, res) {
+        var ph = ok && res && res.responseUnsafe && res.responseUnsafe.contact && res.responseUnsafe.contact.phone_number;
+        if (ph) { $('phone').value = fmtPhone(ph); share.remove(); validate(); }
+      });
+    });
+    $('phone').addEventListener('input', validate);
+    $('phone').addEventListener('blur', function () { this.value = fmtPhone(this.value); });
+    function validate() { var ok = phoneOk($('phone').value); $('phoneF').classList.remove('err'); setCta('Записаться', true, submit); return ok; }
+    validate();
+  }
+
+  function fmtPhone(v) {
+    var d = String(v).replace(/\D/g, '');
+    if (d.length === 11 && d.charAt(0) === '8') d = '7' + d.slice(1);
+    if (d.length === 11 && d.charAt(0) === '7') return '+7 ' + d.slice(1, 4) + ' ' + d.slice(4, 7) + '-' + d.slice(7, 9) + '-' + d.slice(9);
+    return v;
+  }
+  function phoneOk(v) { var dgt = String(v).replace(/\D/g, ''); return dgt.length >= 10 && dgt.length <= 15; }
+
+  var sending = false;
+  function submit() {
+    if (sending) return;
+    var phone = $('phone').value.trim(), car = $('car').value.trim();
+    if (!phoneOk(phone)) { $('phoneF').classList.add('err'); haptic('error'); return toast('Проверьте номер телефона'); }
+    sending = true; setCta('Записываем…', false);
+    api('/book', { method: 'POST', body: { svc: S.svc.id, day: S.day, cell: S.cell, phone: phone, car: car } }).then(function (r) {
+      sending = false;
+      if (r.booking) { haptic('success'); S.data.profile.phone = phone; S.data.profile.car = car; S.booked = r.booking; return doneScreen(); }
+      haptic('error');
+      if (r.error === 'taken') { toast('Это время только что заняли. Выберите другое.'); S.cell = null; return loadSlots(); }
+      if (r.error === 'past') { toast('Это время уже прошло.'); S.cell = null; return loadSlots(); }
+      if (r.error === 'limit') { toast('У вас уже ' + r.count + ' активные записи. Отмените одну, чтобы записаться снова.'); return load(); }
+      if (r.error === 'phone') { $('phoneF').classList.add('err'); setCta('Записаться', true, submit); return toast('Проверьте номер телефона'); }
+      toast('Не получилось записаться. Попробуйте ещё раз.'); setCta('Записаться', true, submit);
+    }).catch(function () { sending = false; toast('Нет связи. Попробуйте ещё раз.'); setCta('Записаться', true, submit); });
+  }
+
+  function doneScreen() {
+    setBack(null);
+    var b = S.booked;
+    view.innerHTML = '<div class="done"><div class="title"><h1>Вы записаны</h1></div>'
+      + '<dl class="facts"><div><dt>Когда</dt><dd>' + esc(cap(b.date)) + '<br>' + esc(b.range) + '</dd></div><div><dt>Услуга</dt><dd>' + esc(b.service) + '</dd></div>' + (b.car ? '<div><dt>Автомобиль</dt><dd>' + esc(b.car) + '</dd></div>' : '') + '</dl>'
+      + '<p>Напоминание придёт накануне в чат с ботом. Если планы изменятся — отмените запись здесь, чтобы время освободилось.</p></div>';
+    setCta('Готово', true, function () { if (inTg) tg.close(); else load(); });
+  }
+
+  function gate() {
+    setBack(null); setCta(null);
+    view.innerHTML = '<div class="gate"><h1>Запись через Telegram</h1><p>Откройте это окно из бота ТехноМоторики.</p></div>';
+  }
+
+  function load() {
+    if (!inTg && !devUser) return gate();
+    if (!S.data) { view.innerHTML = '<div class="title"><h1>Запись на сервис</h1><p>&nbsp;</p></div>' + skeleton(6); setCta(null); }
+    return api('/init').then(function (r) {
+      if (r.status === 401) return gate();
+      S.data = r; home();
+    }).catch(function () { view.innerHTML = '<p class="empty">Нет связи. Закройте и откройте окно ещё раз.</p>'; });
+  }
+
+  load();
+})();
+</script>
+</body>
+</html>
