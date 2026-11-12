@@ -1,0 +1,15 @@
+name = "tehnomotorika-bot"
+main = "src/index.js"
+compatibility_date = "2026-11-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "tehnomotorika"
+database_id = "ВСТАВЬТЕ_ID_ИЗ_wrangler_d1_create"
+
+# 09:00 МСК — расписание на день владельцу, 12:00 МСК — напоминания клиентам на завтра
+[triggers]
+crons = ["0 6 * * *", "0 9 * * *"]
+
+[observability]
+enabled = true

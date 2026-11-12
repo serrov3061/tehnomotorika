@@ -1,0 +1,15 @@
+{
+  "name": "tehnomotorika-bot",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:init": "wrangler d1 execute tehnomotorika --remote --file=schema.sql",
+    "test": "node test/e2e.mjs",
+    "setup": "node scripts/setup.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.161.0"
+  }
+}
