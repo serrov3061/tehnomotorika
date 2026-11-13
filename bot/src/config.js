@@ -14,8 +14,8 @@ export const MAX_ACTIVE_PER_CLIENT = 2; // защита от «занять вс
 export const SERVICES = [
   { id: 'to',    name: 'Плановое ТО',                 price: '5 000 ₽',  len: 4 },
   { id: 'oil',   name: 'Замена масла',                price: '3 000 ₽',  len: 2 },
-  { id: 'padf',  name: 'Передние тормозные колодки',  price: '3 500 ₽',  len: 2 },
-  { id: 'padr',  name: 'Задние тормозные колодки',    price: '3 500 ₽',  len: 2 },
+  { id: 'padf',  name: 'Колодки передние',  price: '3 500 ₽',  len: 2 },
+  { id: 'padr',  name: 'Колодки задние',    price: '3 500 ₽',  len: 2 },
   { id: 'ac',    name: 'Заправка кондиционера',       price: '6 000 ₽',  len: 2 },
   { id: 'cdiag', name: 'Компьютерная диагностика',    price: '3 000 ₽',  len: 2 },
   { id: 'sdiag', name: 'Диагностика ходовой',         price: '3 000 ₽',  len: 2 },

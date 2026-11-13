@@ -68,13 +68,13 @@ if (!env.BOT_TOKEN) { console.error('BOT_TOKEN не задан'); process.exit(1
 
 /* ---------- Статика мини-аппа ---------- */
 const PUBLIC = join(HERE, 'public');
-const TYPES = { '.html': 'text/html; charset=utf-8', '.woff2': 'font/woff2', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml' };
+const TYPES = { '.html': 'text/html; charset=utf-8', '.woff2': 'font/woff2', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml' };
 function staticFile(pathname) {
   let p = pathname === '/app' || pathname === '/app/' ? '/app/index.html' : pathname;
   if (!p.startsWith('/app/') && !p.startsWith('/fonts/')) return null;
   const file = normalize(join(PUBLIC, p));
   if (!file.startsWith(PUBLIC) || !existsSync(file) || !statSync(file).isFile()) return null;
-  return { body: readFileSync(file), type: TYPES[extname(file)] || 'application/octet-stream', cache: p.startsWith('/fonts/') };
+  return { body: readFileSync(file), type: TYPES[extname(file)] || 'application/octet-stream', cache: p.startsWith('/fonts/') || p.startsWith('/app/img/') };
 }
 
 /* ---------- HTTP ---------- */
