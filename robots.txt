@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://tehnomotorika.vercel.app/sitemap.xml

@@ -4,14 +4,33 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ТехноМоторика — обслуживание и ремонт BMW и Mercedes-Benz</title>
-<meta name="description" content="Сервис BMW и Mercedes-Benz. Пн–Сб 10:00–21:00. Телефон +7 985 444-70-63, WhatsApp и Telegram +7 968 961-02-66. Цены и фото работ.">
+<meta name="description" content="Обслуживание и ремонт BMW и Mercedes-Benz: диагностика от 3 000 ₽, ТО, ходовая, пневмоподвеска, двигатель, АКПП. 5,0 на Яндекс Картах. Пн–Сб 10:00–21:00, +7 985 444-70-63.">
+<link rel="canonical" href="https://tehnomotorika.vercel.app/">
+<meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#0b0b0c">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%227%22 fill=%22%230b0b0c%22/%3E%3Cpath d=%22M9 23l4-14h3l-4 14z%22 fill=%22%234fa3e0%22/%3E%3Cpath d=%22M14 23l4-14h3l-4 14z%22 fill=%22%231c3f94%22/%3E%3Cpath d=%22M19 23l4-14h3l-4 14z%22 fill=%22%23e1252b%22/%3E%3C/svg%3E">
-<link rel="preload" href="fonts/geologica-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:site_name" content="ТехноМоторика">
+<meta property="og:url" content="https://tehnomotorika.vercel.app/">
+<meta property="og:title" content="ТехноМоторика — сервис BMW и Mercedes-Benz">
+<meta property="og:description" content="Диагностика, ТО и ремонт. 5,0 на Яндекс Картах. Пн–Сб 10:00–21:00, тел. +7 985 444-70-63.">
+<meta property="og:image" content="https://tehnomotorika.vercel.app/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BMW M3 в боксе ТехноМоторики под вывеской сервиса">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preload" href="/fonts/geologica-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/geologica-latin.woff2" as="font" type="font/woff2" crossorigin>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"AutoRepair","name":"ТехноМоторика","alternateName":"Technomotorica","url":"https://tehnomotorika.vercel.app/","image":"https://tehnomotorika.vercel.app/og.jpg","logo":"https://tehnomotorika.vercel.app/apple-touch-icon.png","telephone":"+7-985-444-70-63","description":"Обслуживание и ремонт BMW и Mercedes-Benz: диагностика, ТО, ходовая, пневмоподвеска, двигатель, АКПП.","openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"opens":"10:00","closes":"21:00"}],"priceRange":"3000–50000 RUB"}
+</script>
 <style>
 /* ===== Fonts: Geologica (OFL), one family for everything ===== */
-@font-face{font-family:"Geologica";src:url(fonts/geologica-cyrillic.woff2) format("woff2");font-weight:100 900;font-display:swap;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
-@font-face{font-family:"Geologica";src:url(fonts/geologica-latin.woff2) format("woff2");font-weight:100 900;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+20BD,U+2122,U+2191,U+2193,U+2212,U+2215,U+2605}
+@font-face{font-family:"Geologica";src:url(/fonts/geologica-cyrillic.woff2) format("woff2");font-weight:100 900;font-display:swap;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:"Geologica";src:url(/fonts/geologica-latin.woff2) format("woff2");font-weight:100 900;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+20BD,U+2122,U+2191,U+2193,U+2212,U+2215,U+2605}
 
 /* ===== Tokens ===== */
 :root{
@@ -19,6 +38,7 @@
   --bg:#0b0b0c;
   --surface:#151517;
   --line:#26262a;
+  --line-strong:#3a3a40;
   --text:#f3f2ef;
   --muted:#9b9ba1;
   --red:#e1252b;
@@ -64,12 +84,14 @@ h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.015em;line-height:1.15}
 .island nav a{display:flex;align-items:center;height:40px;padding:0 14px;border-radius:999px;font-size:var(--fs-small);font-weight:500;color:var(--muted);transition:color .15s,background-color .15s}
 .island nav a:active{background:rgba(255,255,255,.08);color:var(--text)}
 @media (hover:hover){.island nav a:hover{background:rgba(255,255,255,.06);color:var(--text)}}
-@media (max-width:379px){.island{padding-left:14px;gap:var(--s2)}.stripe{display:none}.logo b{font-size:13px}.island nav a{padding:0 10px;font-size:13px}}
+@media (max-width:379px){.island{padding-left:14px;gap:var(--s2)}.logo b{font-size:13px}.island nav a{padding:0 10px;font-size:13px}}
+@media (max-width:349px){.stripe{display:none}}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.island{background:#18181b}}
 
 /* ===== Card (first screen) ===== */
 .card{display:grid;gap:var(--s5);padding-top:var(--s4);padding-bottom:var(--s7)}
 .cover{border-radius:var(--r);overflow:hidden;background:var(--surface);aspect-ratio:4/3}
+.cover picture{display:block;width:100%;height:100%}
 .cover img{width:100%;height:100%;object-fit:cover;object-position:50% 52%}
 .intro h1{font-size:var(--fs-display);font-weight:700;letter-spacing:-.025em;line-height:1.08;text-wrap:balance;hyphens:manual}
 .intro p{margin:var(--s2) 0 0;color:var(--muted)}
@@ -84,7 +106,7 @@ h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.015em;line-height:1.15}
 .btn:active{transform:scale(.98)}
 .btn-call{grid-column:1/-1;background:var(--red);border-color:var(--red);color:#fff;min-height:56px;font-size:17px}
 .btn-call:active{background:var(--red-press)}
-@media (hover:hover){.btn:hover{border-color:#3a3a40}.btn-call:hover{background:var(--red-press);border-color:var(--red-press)}}
+@media (hover:hover){.btn:hover{border-color:var(--line-strong)}.btn-call:hover{background:var(--red-press);border-color:var(--red-press)}}
 
 .facts{margin:0;border-top:1px solid var(--line)}
 .facts div{display:grid;grid-template-columns:112px 1fr;gap:var(--s4);padding:var(--s4) 0;border-bottom:1px solid var(--line)}
@@ -95,8 +117,8 @@ h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.015em;line-height:1.15}
 @media (hover:hover){.facts a:hover{text-decoration-color:var(--text)}}
 
 @media (min-width:900px){
-  .card{grid-template-columns:1.1fr 1fr;gap:var(--s7);align-items:start;padding-top:var(--s6);padding-bottom:var(--s8)}
-  .cover{aspect-ratio:4/5;position:sticky;top:88px}
+  .card{grid-template-columns:1.1fr 1fr;gap:var(--s7);align-items:center;padding-top:var(--s6);padding-bottom:var(--s8)}
+  .cover{aspect-ratio:1/1}
   .side{display:grid;gap:var(--s5);padding-top:var(--s2)}
 }
 @media (max-width:899px){.side{display:grid;gap:var(--s5)}}
@@ -110,7 +132,8 @@ h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.015em;line-height:1.15}
 /* ===== Works carousel (native swipe) ===== */
 .rail{display:grid;grid-auto-flow:column;grid-auto-columns:78%;gap:var(--s3);overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0 calc(var(--s4) * -1);padding:0 var(--s4);scroll-padding:0 var(--s4)}
 .rail::-webkit-scrollbar{display:none}
-.shot{scroll-snap-align:start;border-radius:var(--r);overflow:hidden;background:var(--surface);aspect-ratio:4/5;cursor:zoom-in}
+.shot{display:block;scroll-snap-align:start;border-radius:var(--r);overflow:hidden;background:var(--surface);aspect-ratio:4/5;cursor:zoom-in}
+.shot picture{display:block;width:100%;height:100%}
 .shot img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s}
 .shot img.ok{opacity:1}
 .no-js .shot img{opacity:1}
@@ -126,9 +149,10 @@ h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.015em;line-height:1.15}
 /* ===== Prices ===== */
 .groups{display:grid;gap:var(--s6)}
 @media (min-width:900px){.groups{grid-template-columns:repeat(3,1fr);gap:var(--s6)}}
-.groups h3{font-size:var(--fs-small);font-weight:600;color:var(--muted);padding-bottom:var(--s3);border-bottom:1px solid var(--line)}
+.groups h3{font-size:var(--fs-body);font-weight:600;padding-bottom:var(--s3);border-bottom:1px solid var(--line-strong)}
 .groups ul{list-style:none;margin:0;padding:0}
 .groups li{display:flex;justify-content:space-between;align-items:baseline;gap:var(--s4);padding:var(--s3) 0;border-bottom:1px solid var(--line)}
+.groups li:last-child{border-bottom:0}
 .groups li span:last-child{white-space:nowrap;font-weight:600;font-variant-numeric:tabular-nums}
 .groups li .ask{font-weight:400;color:var(--muted)}
 .note{margin:var(--s5) 0 0;font-size:var(--fs-small)}
@@ -180,7 +204,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:var(-
 
 <main>
   <section class="wrap card">
-    <div class="cover"><img src="photos/m3-sign.jpg" alt="BMW M3 в боксе ТехноМоторики под вывеской сервиса" width="960" height="1280" fetchpriority="high"></div>
+    <div class="cover"><picture><source type="image/avif" srcset="photos/m3-sign-600.avif 600w, photos/m3-sign-900.avif 825w" sizes="(min-width:900px) 520px, 100vw"><source type="image/webp" srcset="photos/m3-sign-600.webp 600w, photos/m3-sign-900.webp 825w" sizes="(min-width:900px) 520px, 100vw"><img src="photos/m3-sign.jpg" alt="BMW M3 в боксе ТехноМоторики под вывеской сервиса" width="825" height="1100" fetchpriority="high"></picture></div>
 
     <div class="side">
       <div class="intro">
@@ -206,43 +230,43 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:var(-
     <div class="wrap">
       <div class="sec-h">
         <h2>Работы</h2>
-        <div class="rail-nav" aria-label="Листать фото">
+        <div class="rail-nav" role="group" aria-label="Листать фото">
           <button type="button" id="prev" aria-label="Назад"><svg><use href="#i-left"/></svg></button>
           <button type="button" id="next" aria-label="Вперёд"><svg><use href="#i-right"/></svg></button>
         </div>
       </div>
       <div class="rail" id="rail">
-        <button class="shot" type="button"><img src="photos/aventador-zhiguli.jpg" alt="Lamborghini Aventador и гоночная «копейка» в боксе" loading="lazy" decoding="async"></button>
-        <button class="shot" type="button"><img src="photos/m4-hood.jpg" alt="BMW M4 на обслуживании" loading="lazy" decoding="async"></button>
-        <button class="shot" type="button"><img src="photos/master-laptop.jpg" alt="Мастер проводит компьютерную диагностику" loading="lazy" decoding="async"></button>
-        <button class="shot" type="button"><img src="photos/huracan-row.jpg" alt="Машины клиентов в боксе" loading="lazy" decoding="async"></button>
-        <button class="shot" type="button"><img src="photos/m8.jpg" alt="BMW 8 Gran Coupe" loading="lazy" decoding="async"></button>
-        <button class="shot" type="button"><img src="photos/m4-diag.jpg" alt="Диагностика BMW M4" loading="lazy" decoding="async"></button>
-        <button class="shot" type="button"><img src="photos/alignment.jpg" alt="Развал-схождение" loading="lazy" decoding="async"></button>
-        <button class="shot" type="button"><img src="photos/urus.jpg" alt="Lamborghini Urus" loading="lazy" decoding="async"></button>
-        <button class="shot" type="button"><img src="photos/cullinan.jpg" alt="Rolls-Royce Cullinan в боксе" loading="lazy" decoding="async"></button>
-        <button class="shot" type="button"><img src="photos/s-class.jpg" alt="Mercedes-Benz S-класс" loading="lazy" decoding="async"></button>
-        <button class="shot" type="button"><img src="photos/aventador-diag.jpg" alt="Диагностика Lamborghini Aventador" loading="lazy" decoding="async"></button>
-        <button class="shot" type="button"><img src="photos/g-class.jpg" alt="Mercedes-AMG G-класс" loading="lazy" decoding="async"></button>
-        <button class="shot" type="button"><img src="photos/m5-e60.jpg" alt="BMW M5" loading="lazy" decoding="async"></button>
-        <button class="shot" type="button"><img src="photos/lexus-alignment.jpg" alt="Развал-схождение Lexus" loading="lazy" decoding="async"></button>
-        <button class="shot" type="button"><img src="photos/m2.jpg" alt="BMW M2" loading="lazy" decoding="async"></button>
-        <button class="shot" type="button"><img src="photos/m4-orange.jpg" alt="BMW M4 с открытым капотом" loading="lazy" decoding="async"></button>
+        <a class="shot" href="photos/m4-hood.jpg"><picture><source type="image/avif" srcset="photos/m4-hood-600.avif 600w, photos/m4-hood-900.avif 900w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><source type="image/webp" srcset="photos/m4-hood-600.webp 600w, photos/m4-hood-900.webp 900w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><img src="photos/m4-hood.jpg" alt="BMW M4 на обслуживании" width="1100" height="1100" loading="lazy" decoding="async"></picture></a>
+        <a class="shot" href="photos/master-laptop.jpg"><picture><source type="image/avif" srcset="photos/master-laptop-600.avif 600w, photos/master-laptop-900.avif 619w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><source type="image/webp" srcset="photos/master-laptop-600.webp 600w, photos/master-laptop-900.webp 619w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><img src="photos/master-laptop.jpg" alt="Мастер проводит компьютерную диагностику" width="619" height="1100" loading="lazy" decoding="async"></picture></a>
+        <a class="shot" href="photos/s-class.jpg"><picture><source type="image/avif" srcset="photos/s-class-600.avif 600w, photos/s-class-900.avif 825w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><source type="image/webp" srcset="photos/s-class-600.webp 600w, photos/s-class-900.webp 825w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><img src="photos/s-class.jpg" alt="Mercedes-Benz S-класс" width="825" height="1100" loading="lazy" decoding="async"></picture></a>
+        <a class="shot" href="photos/m4-diag.jpg"><picture><source type="image/avif" srcset="photos/m4-diag-600.avif 600w, photos/m4-diag-900.avif 619w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><source type="image/webp" srcset="photos/m4-diag-600.webp 600w, photos/m4-diag-900.webp 619w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><img src="photos/m4-diag.jpg" alt="Диагностика BMW M4" width="619" height="1100" loading="lazy" decoding="async"></picture></a>
+        <a class="shot" href="photos/g-class.jpg"><picture><source type="image/avif" srcset="photos/g-class-600.avif 600w, photos/g-class-900.avif 619w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><source type="image/webp" srcset="photos/g-class-600.webp 600w, photos/g-class-900.webp 619w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><img src="photos/g-class.jpg" alt="Mercedes-AMG G-класс" width="619" height="1100" loading="lazy" decoding="async"></picture></a>
+        <a class="shot" href="photos/m8.jpg"><picture><source type="image/avif" srcset="photos/m8-600.avif 600w, photos/m8-900.avif 825w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><source type="image/webp" srcset="photos/m8-600.webp 600w, photos/m8-900.webp 825w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><img src="photos/m8.jpg" alt="BMW 8 Gran Coupe" width="825" height="1100" loading="lazy" decoding="async"></picture></a>
+        <a class="shot" href="photos/alignment.jpg"><picture><source type="image/avif" srcset="photos/alignment-600.avif 600w, photos/alignment-900.avif 825w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><source type="image/webp" srcset="photos/alignment-600.webp 600w, photos/alignment-900.webp 825w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><img src="photos/alignment.jpg" alt="Развал-схождение" width="825" height="1100" loading="lazy" decoding="async"></picture></a>
+        <a class="shot" href="photos/m5-e60.jpg"><picture><source type="image/avif" srcset="photos/m5-e60-600.avif 600w, photos/m5-e60-900.avif 825w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><source type="image/webp" srcset="photos/m5-e60-600.webp 600w, photos/m5-e60-900.webp 825w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><img src="photos/m5-e60.jpg" alt="BMW M5" width="825" height="1100" loading="lazy" decoding="async"></picture></a>
+        <a class="shot" href="photos/m2.jpg"><picture><source type="image/avif" srcset="photos/m2-600.avif 600w, photos/m2-900.avif 852w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><source type="image/webp" srcset="photos/m2-600.webp 600w, photos/m2-900.webp 852w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><img src="photos/m2.jpg" alt="BMW M2" width="852" height="1100" loading="lazy" decoding="async"></picture></a>
+        <a class="shot" href="photos/m4-orange.jpg"><picture><source type="image/avif" srcset="photos/m4-orange-600.avif 600w, photos/m4-orange-900.avif 825w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><source type="image/webp" srcset="photos/m4-orange-600.webp 600w, photos/m4-orange-900.webp 825w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><img src="photos/m4-orange.jpg" alt="BMW M4 с открытым капотом" width="825" height="1100" loading="lazy" decoding="async"></picture></a>
+        <a class="shot" href="photos/aventador-zhiguli.jpg"><picture><source type="image/avif" srcset="photos/aventador-zhiguli-600.avif 600w, photos/aventador-zhiguli-900.avif 900w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><source type="image/webp" srcset="photos/aventador-zhiguli-600.webp 600w, photos/aventador-zhiguli-900.webp 900w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><img src="photos/aventador-zhiguli.jpg" alt="Lamborghini Aventador и гоночная «копейка» в боксе" width="1100" height="1100" loading="lazy" decoding="async"></picture></a>
+        <a class="shot" href="photos/aventador-diag.jpg"><picture><source type="image/avif" srcset="photos/aventador-diag-600.avif 600w, photos/aventador-diag-900.avif 825w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><source type="image/webp" srcset="photos/aventador-diag-600.webp 600w, photos/aventador-diag-900.webp 825w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><img src="photos/aventador-diag.jpg" alt="Диагностика Lamborghini Aventador" width="825" height="1100" loading="lazy" decoding="async"></picture></a>
+        <a class="shot" href="photos/huracan-row.jpg"><picture><source type="image/avif" srcset="photos/huracan-row-600.avif 600w, photos/huracan-row-900.avif 825w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><source type="image/webp" srcset="photos/huracan-row-600.webp 600w, photos/huracan-row-900.webp 825w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><img src="photos/huracan-row.jpg" alt="Машины клиентов в боксе" width="825" height="1100" loading="lazy" decoding="async"></picture></a>
+        <a class="shot" href="photos/urus.jpg"><picture><source type="image/avif" srcset="photos/urus-600.avif 600w, photos/urus-900.avif 619w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><source type="image/webp" srcset="photos/urus-600.webp 600w, photos/urus-900.webp 619w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><img src="photos/urus.jpg" alt="Lamborghini Urus" width="619" height="1100" loading="lazy" decoding="async"></picture></a>
+        <a class="shot" href="photos/cullinan.jpg"><picture><source type="image/avif" srcset="photos/cullinan-600.avif 600w, photos/cullinan-900.avif 900w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><source type="image/webp" srcset="photos/cullinan-600.webp 600w, photos/cullinan-900.webp 900w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><img src="photos/cullinan.jpg" alt="Rolls-Royce Cullinan в боксе" width="1100" height="1100" loading="lazy" decoding="async"></picture></a>
+        <a class="shot" href="photos/lexus-alignment.jpg"><picture><source type="image/avif" srcset="photos/lexus-alignment-600.avif 600w, photos/lexus-alignment-900.avif 619w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><source type="image/webp" srcset="photos/lexus-alignment-600.webp 600w, photos/lexus-alignment-900.webp 619w" sizes="(min-width:900px) 340px, (min-width:600px) 46vw, 78vw"><img src="photos/lexus-alignment.jpg" alt="Развал-схождение Lexus" width="619" height="1100" loading="lazy" decoding="async"></picture></a>
       </div>
     </div>
   </section>
 
   <section class="sec" id="prices">
     <div class="wrap">
-      <div class="sec-h"><h2>Цены</h2></div>
+      <div class="sec-h"><h2>Цены</h2><span class="muted">за работу, без запчастей</span></div>
       <div class="groups">
         <div>
           <h3>Обслуживание</h3>
           <ul>
             <li><span>Плановое ТО</span><span>5 000 ₽</span></li>
             <li><span>Замена масла</span><span>3 000 ₽</span></li>
-            <li><span>Передние тормозные колодки</span><span>3 500 ₽</span></li>
-            <li><span>Задние тормозные колодки</span><span>3 500 ₽</span></li>
+            <li><span>Колодки передние</span><span>3 500 ₽</span></li>
+            <li><span>Колодки задние</span><span>3 500 ₽</span></li>
             <li><span>Заправка кондиционера</span><span>6 000 ₽</span></li>
           </ul>
         </div>
@@ -267,7 +291,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:var(-
           </ul>
         </div>
       </div>
-      <p class="note muted">Цена работы. Итог зависит от модели и состояния, сумму согласуем до начала.</p>
+      <p class="note muted">Итог зависит от модели и состояния. Сумму согласуем до начала работ.</p>
     </div>
   </section>
 </main>
@@ -275,14 +299,15 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:var(-
 <footer><div class="wrap"><span>© <span id="y">2026</span> ТехноМоторика</span><a class="credit" href="https://t.me/taketether" target="_blank" rel="noopener">Сайт — solyaedits</a></div></footer>
 
 <div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-label="Фото работ">
-  <div class="v-top"><span id="count"></span><button type="button" id="close" aria-label="Закрыть"><svg><use href="#i-x"/></svg></button></div>
-  <div class="v-track" id="track"></div>
+  <div class="v-top"><span id="count" aria-live="polite"></span><button type="button" id="close" aria-label="Закрыть"><svg><use href="#i-x"/></svg></button></div>
+  <div class="v-track" id="track" tabindex="0" aria-label="Фото, листайте стрелками"></div>
 </div>
 
 <script>
 (function(){
   var $ = function(id){ return document.getElementById(id); };
   $('y').textContent = new Date().getFullYear();
+  var smooth = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
 
   var rail = $('rail'), shots = Array.prototype.slice.call(rail.querySelectorAll('.shot'));
 
@@ -291,12 +316,12 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:var(-
     var img = s.querySelector('img');
     function ok(){ img.classList.add('ok'); }
     if (img.complete && img.naturalWidth) ok(); else img.addEventListener('load', ok);
-    img.addEventListener('error', function(){ s.remove(); shots = shots.filter(function(x){ return x !== s; }); });
+    img.addEventListener('error', function(){ s.remove(); shots = shots.filter(function(x){ return x !== s; }); edges(); });
   });
 
   /* desktop arrows: scroll by one card */
   var prev = $('prev'), next = $('next');
-  function step(dir){ var w = shots[0] ? shots[0].getBoundingClientRect().width + 12 : 300; rail.scrollBy({left: dir * w, behavior: 'smooth'}); }
+  function step(dir){ var w = shots[0] ? shots[0].getBoundingClientRect().width + 12 : 300; rail.scrollBy({left: dir * w, behavior: smooth}); }
   function edges(){ prev.disabled = rail.scrollLeft < 4; next.disabled = rail.scrollLeft + rail.clientWidth > rail.scrollWidth - 4; }
   prev.addEventListener('click', function(){ step(-1); });
   next.addEventListener('click', function(){ step(1); });
@@ -304,37 +329,43 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:var(-
   window.addEventListener('resize', edges);
   edges();
 
-  /* full-screen viewer: native swipe between slides */
-  var viewer = $('viewer'), track = $('track'), count = $('count'), built = false, lastFocus = null;
+  /* full-screen viewer: native swipe between slides; Back button closes it */
+  var viewer = $('viewer'), track = $('track'), count = $('count'), lastFocus = null, idx = 0;
+  var bg = document.querySelectorAll('body > header, body > main, body > footer');
+  function setInert(on){ for (var k = 0; k < bg.length; k++) bg[k].inert = on; }
   function build(){
     track.innerHTML = '';
     shots.forEach(function(s){
       var img = s.querySelector('img'), d = document.createElement('div'), im = document.createElement('img');
-      d.className = 'v-slide'; im.src = img.getAttribute('src'); im.alt = img.alt; im.decoding = 'async';
+      d.className = 'v-slide'; im.loading = 'lazy'; im.decoding = 'async'; im.alt = img.alt; im.src = s.getAttribute('href');
       d.appendChild(im); track.appendChild(d);
     });
-    built = true;
   }
   function current(){ return Math.round(track.scrollLeft / Math.max(1, track.clientWidth)); }
-  function label(){ count.textContent = (current() + 1) + ' / ' + shots.length; }
+  function label(){ idx = current(); count.textContent = (idx + 1) + ' / ' + shots.length; }
   function open(i){
-    if (!built || track.children.length !== shots.length) build();
+    if (track.children.length !== shots.length) build();
     lastFocus = document.activeElement;
-    viewer.hidden = false; document.documentElement.style.overflow = 'hidden';
+    viewer.hidden = false; setInert(true); document.documentElement.style.overflow = 'hidden';
     track.scrollLeft = i * track.clientWidth; label(); $('close').focus();
+    history.pushState({viewer: 1}, '');
   }
-  function close(){ viewer.hidden = true; document.documentElement.style.overflow = ''; if (lastFocus) lastFocus.focus(); }
+  function hide(){ if (viewer.hidden) return; viewer.hidden = true; setInert(false); document.documentElement.style.overflow = ''; if (lastFocus) lastFocus.focus(); }
+  function close(){ if (history.state && history.state.viewer) history.back(); else hide(); }
+  window.addEventListener('popstate', hide);
   rail.addEventListener('click', function(e){
     var s = e.target.closest ? e.target.closest('.shot') : null;
-    if (s) open(shots.indexOf(s));
+    if (!s || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    e.preventDefault(); open(shots.indexOf(s));
   });
   track.addEventListener('scroll', label, {passive:true});
+  window.addEventListener('resize', function(){ if (!viewer.hidden) track.scrollLeft = idx * track.clientWidth; });
   $('close').addEventListener('click', close);
   document.addEventListener('keydown', function(e){
     if (viewer.hidden) return;
     if (e.key === 'Escape') close();
-    if (e.key === 'ArrowRight') track.scrollBy({left: track.clientWidth, behavior: 'smooth'});
-    if (e.key === 'ArrowLeft') track.scrollBy({left: -track.clientWidth, behavior: 'smooth'});
+    if (e.key === 'ArrowRight') track.scrollBy({left: track.clientWidth, behavior: smooth});
+    if (e.key === 'ArrowLeft') track.scrollBy({left: -track.clientWidth, behavior: smooth});
   });
 })();
 </script>
