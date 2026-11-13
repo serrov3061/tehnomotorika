@@ -135,7 +135,7 @@ const contactsKb = [u('Маршрут', CONTACTS.map), u('Сайт', CONTACTS.si
 
 async function homeScreen(env, ctx) {
   await clearSession(env, ctx.uid);
-  const text = `<b>ТехноМоторика</b>\nСервис BMW и Mercedes-Benz\n${CONTACTS.hours} · ${CONTACTS.phone}\n\nВыберите услугу и время — оно сразу закрепится за вами.`;
+  const text = `<b>ТехноМоторика</b>\nВыберите услугу и время — оно сразу закрепится за вами.`;
   const first = ORIGIN ? [{ text: 'Открыть запись', web_app: { url: `${ORIGIN}/app` } }] : [b('Записаться', 'book')];
   return show(env, ctx, text, ik([first, [b('Записаться в чате', 'book'), b('Мои записи', 'my')], contactsKb]));
 }
