@@ -161,8 +161,6 @@ h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.015em;line-height:1.15}
 /* ===== Footer ===== */
 footer{border-top:1px solid var(--line);padding:var(--s5) 0 calc(var(--s5) + env(safe-area-inset-bottom,0px));font-size:var(--fs-small);color:var(--muted)}
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:var(--s2) var(--s4)}
-.credit{color:var(--muted);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:4px;transition:color .15s,text-decoration-color .15s}
-@media (hover:hover){.credit:hover{color:var(--text);text-decoration-color:var(--text)}}
 
 /* ===== Viewer ===== */
 .viewer{position:fixed;inset:0;z-index:50;background:#000;display:flex;flex-direction:column}
@@ -299,7 +297,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:var(-
   </section>
 </main>
 
-<footer><div class="wrap"><span>© <span id="y">2026</span> ТехноМоторика</span><a class="credit" href="https://t.me/taketether" target="_blank" rel="noopener">Сайт — solyaedits</a></div></footer>
+<footer><div class="wrap"><span>© <span id="y">2026</span> ТехноМоторика</span></div></footer>
 
 <div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-label="Фото работ">
   <div class="v-top"><span id="count" aria-live="polite"></span><button type="button" id="close" aria-label="Закрыть"><svg><use href="#i-x"/></svg></button></div>
