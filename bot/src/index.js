@@ -1,5 +1,5 @@
 // ТехноМоторика — бот онлайн-записи (Cloudflare Workers + D1).
-import { SERVICES, CONTACTS, CELLS, MAX_ACTIVE_PER_CLIENT } from './config.js';
+import { SERVICES, CONTACTS, CELLS, MAX_ACTIVE_PER_CLIENT, BOT_SHORT, BOT_DESCRIPTION } from './config.js';
 import {
   todayKey, addDays, isClosed, isValidDay, dayShort, dayLong, rangeText, durationText,
   firstOpenCell, freeStarts, bookableDays, isUpcoming, cellTime,
@@ -588,8 +588,10 @@ export default {
       const hook = await tg(env, 'setWebhook', { url: `${url.origin}/tg`, secret_token: env.WEBHOOK_SECRET, allowed_updates: ['message', 'callback_query'], drop_pending_updates: true });
       const cmds = await tg(env, 'setMyCommands', { commands: [{ command: 'book', description: 'Записаться' }, { command: 'my', description: 'Мои записи' }, { command: 'start', description: 'Главное меню' }] });
       const menu = await tg(env, 'setChatMenuButton', { menu_button: { type: 'web_app', text: 'Запись', web_app: { url: `${url.origin}/app` } } });
+      const about = await tg(env, 'setMyShortDescription', { short_description: BOT_SHORT });
+      const desc = await tg(env, 'setMyDescription', { description: BOT_DESCRIPTION });
       const me = await tg(env, 'getMe', {});
-      return Response.json({ webhook: hook.ok, commands: cmds.ok, menu: menu.ok, app: `${url.origin}/app`, bot: me.result?.username, link: me.result ? `https://t.me/${me.result.username}?start=book` : null });
+      return Response.json({ webhook: hook.ok, commands: cmds.ok, menu: menu.ok, about: about.ok, description: desc.ok, app: `${url.origin}/app`, bot: me.result?.username, link: me.result ? `https://t.me/${me.result.username}?start=book` : null });
     }
     if (url.pathname === '/book') {
       const me = await tg(env, 'getMe', {});
