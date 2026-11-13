@@ -1,0 +1,7 @@
+.git
+bot/node_modules
+bot/.wrangler
+bot/.dev.vars
+photos
+fonts
+index.html
