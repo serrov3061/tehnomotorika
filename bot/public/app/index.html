@@ -333,18 +333,25 @@ h1,h2{margin:0;font-weight:700;letter-spacing:-.015em;line-height:1.15}
   function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
   function svcById(id) { return S.data.services.filter(function (s) { return s.id === id; })[0]; }
 
+  var armTimer;
+  function disarm() {
+    S.confirmCancel = null; clearTimeout(armTimer);
+    view.querySelectorAll('[data-cancel]').forEach(function (x) { x.textContent = 'Отменить запись'; x.classList.remove('confirm'); x.disabled = false; });
+  }
   function cancel(id) {
-    if (S.confirmCancel !== id) {
-      S.confirmCancel = id; haptic('warning');
-      var btn = view.querySelector('[data-cancel="' + id + '"]');
+    var btn = view.querySelector('[data-cancel="' + id + '"]');
+    if (S.confirmCancel !== id) {                       // первое нажатие — «Точно отменить?» только на этой карточке
+      disarm(); S.confirmCancel = id; haptic('warning');
       if (btn) { btn.textContent = 'Точно отменить?'; btn.classList.add('confirm'); pop(btn.parentNode); }
+      armTimer = setTimeout(disarm, 5000);
       return;
     }
-    S.confirmCancel = null;
+    clearTimeout(armTimer); S.confirmCancel = null;
+    if (btn) { btn.disabled = true; btn.textContent = 'Отменяем…'; }
     api('/cancel', { method: 'POST', body: { id: id } }).then(function (r) {
       if (r.ok) { haptic('success'); toast('Запись отменена'); screen = null; return load(); }
-      toast('Не получилось отменить. Попробуйте ещё раз.');
-    });
+      haptic('error'); toast(r.status === 400 ? 'Эта запись уже отменена или прошла.' : 'Не получилось отменить. Попробуйте ещё раз.'); screen = null; load();
+    }).catch(function () { haptic('error'); toast('Нет связи. Попробуйте ещё раз.'); disarm(); });
   }
 
   function pickService(id) {
